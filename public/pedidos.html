@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Pedidos - EstuLanches</title>
+</head>
+<body>
+  <nav>
+    <b>🥪 EstuLanches</b> |
+    <a href="/painel.html">Início</a> |
+    <a href="/cardapio.html">Cardápio</a> |
+    <a href="/pedidos.html">Pedidos</a> |
+    Usuário: <b id="usuario"></b>
+    <button id="sair">Sair</button>
+  </nav>
+  <hr>
+
+  <h1>Pedidos</h1>
+  <p id="mensagem"></p>
+
+  <h2>Novo pedido</h2>
+  <form id="form-pedido">
+    <p><input name="cliente" placeholder="Nome do aluno / turma" size="35" required></p>
+    <table border="1" cellpadding="6">
+      <thead>
+        <tr><th>Produto</th><th>Preço</th><th>Quantidade</th></tr>
+      </thead>
+      <tbody id="produtos"></tbody>
+    </table>
+    <p><button type="submit">Registrar pedido</button></p>
+  </form>
+
+  <h2>Fila de pedidos</h2>
+  <table border="1" cellpadding="6">
+    <thead>
+      <tr><th>Nº</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Status</th><th>Hora</th><th>Ação</th></tr>
+    </thead>
+    <tbody id="fila"></tbody>
+  </table>
+
+  <script type="module" src="/js/pedidos.js"></script>
+</body>
+</html>

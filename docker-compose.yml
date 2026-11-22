@@ -1,24 +1,23 @@
 services:
 
   db:
-    image: mysql:8.4
+    image: postgres:17-alpine
     container_name: estulanches_db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: estulanches
-      MYSQL_USER: ${DB_USER:-estulanches}
-      MYSQL_PASSWORD: ${DB_PASS:-Troque-Esta-Senha-123}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:-Troque-Root-456}
+      POSTGRES_DB: estulanches
+      POSTGRES_USER: ${DB_USER:-estulanches}
+      POSTGRES_PASSWORD: ${DB_PASS:-Troque-Esta-Senha-123}
       TZ: America/Sao_Paulo
     volumes:
-      - dados_mysql:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - dados_postgres:/var/lib/postgresql/data
+      - ./sql.sql:/docker-entrypoint-initdb.d/01-sql.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASS:-Troque-Root-456}"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 20
-      start_period: 30s
+      start_period: 20s
     networks:
       - rede_interna
 
@@ -27,10 +26,13 @@ services:
     image: estulanches:1.0.0
     container_name: estulanches_app
     restart: unless-stopped
+    init: true
     ports:
-      - "${APP_PORT:-8080}:80"
+      - "${APP_PORT:-3000}:3000"
     environment:
+      PORT: 3000
       DB_HOST: db
+      DB_PORT: 5432
       DB_NAME: estulanches
       DB_USER: ${DB_USER:-estulanches}
       DB_PASS: ${DB_PASS:-Troque-Esta-Senha-123}
@@ -42,7 +44,7 @@ services:
       - rede_interna
 
 volumes:
-  dados_mysql:
+  dados_postgres:
 
 networks:
   rede_interna:

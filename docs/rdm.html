@@ -30,8 +30,8 @@
 <h2>1. Identificação</h2>
 <table>
   <tr><th>Sistema</th><td>EstuLanches — gestão de cardápio e pedidos da cantina escolar</td></tr>
-  <tr><th>Versão implantada</th><td><b>1.0.0</b> — imagem <code>estulanches:1.0.0</code> (PHP 8.3 + Apache) e <code>mysql:8.4</code></td></tr>
-  <tr><th>Data / horário</th><td>22/11/2026 — início 07:30 &nbsp; término 07:45</td></tr>
+  <tr><th>Versão implantada</th><td><b>1.0.0</b> — imagem <code>estulanches:1.0.0</code> (Node.js 22 + Express) e <code>postgres:17-alpine</code></td></tr>
+  <tr><th>Data / horário</th><td>22/11/2026 — início ____:____ &nbsp; término ____:____</td></tr>
   <tr><th>Responsável técnico</th><td>Davi Cavalheiro Pero</td></tr>
   <tr><th>Tipo de mudança</th><td>Implantação inicial (nova aplicação em produção com Docker Compose)</td></tr>
   <tr><th>Repositório</th><td>https://github.com/Davicpero/estulanches</td></tr>
@@ -39,30 +39,30 @@
 
 <h2>2. Parâmetros alterados / configurados</h2>
 <table>
-  <tr><th>Porta da aplicação</th><td><code>8080:80</code> (variável <code>APP_PORT</code>)</td></tr>
+  <tr><th>Porta da aplicação</th><td><code>3000:3000</code> (variável <code>APP_PORT</code>)</td></tr>
   <tr><th>Banco de dados</th><td>Sem porta publicada — acessível só pela rede interna <code>rede_interna</code></td></tr>
-  <tr><th>Variáveis de ambiente</th><td><code>DB_HOST=db</code>, <code>DB_NAME=estulanches</code>, <code>DB_USER</code>, <code>DB_PASS</code>, <code>DB_ROOT_PASS</code>, <code>TZ=America/Sao_Paulo</code> (senhas no arquivo <code>.env</code>, fora do Git)</td></tr>
-  <tr><th>Persistência</th><td>Volume <code>dados_mysql</code> em <code>/var/lib/mysql</code>; carga inicial por <code>db/init.sql</code></td></tr>
-  <tr><th>Disponibilidade</th><td><code>restart: unless-stopped</code>; healthcheck no banco (<code>mysqladmin ping</code>) e na app (<code>/saude.php</code>); app só sobe com o banco <i>healthy</i></td></tr>
-  <tr><th>Segurança</th><td><code>php.ini-production</code>, <code>expose_php=Off</code>, <code>ServerTokens Prod</code>, listagem de diretórios desativada, só a pasta <code>public/</code> é servida</td></tr>
+  <tr><th>Variáveis de ambiente</th><td><code>DB_HOST=db</code>, <code>DB_PORT=5432</code>, <code>DB_NAME=estulanches</code>, <code>DB_USER</code>, <code>DB_PASS</code>, <code>PORT=3000</code>, <code>NODE_ENV=production</code>, <code>TZ=America/Sao_Paulo</code> (senhas no <code>.env</code>, fora do Git)</td></tr>
+  <tr><th>Persistência</th><td>Volume <code>dados_postgres</code> em <code>/var/lib/postgresql/data</code>; carga inicial por <code>sql.sql</code></td></tr>
+  <tr><th>Disponibilidade</th><td><code>restart: unless-stopped</code>; healthcheck no banco (<code>pg_isready</code>) e na app (<code>/saude</code>); app só sobe com o banco <i>healthy</i></td></tr>
+  <tr><th>Segurança</th><td>Container com usuário não-root (<code>node</code>), <code>npm ci --omit=dev</code>, <code>x-powered-by</code> desativado, cabeçalhos <code>nosniff</code>/<code>X-Frame-Options</code>, só a pasta <code>public/</code> é servida</td></tr>
 </table>
 
 <h2>3. Resultado dos testes de validação</h2>
 <table>
   <tr><th>Item</th><th style="width:45%">Comando / evidência</th><th style="width:15%">Resultado</th></tr>
   <tr><td>Build e subida dos serviços</td><td><code>docker compose up -d --build</code></td><td class="ok">✔ OK</td></tr>
-  <tr><td>Estado dos serviços e portas</td><td><code>docker compose ps</code> → app e db <i>Up (healthy)</i>, porta 8080</td><td class="ok">✔ OK</td></tr>
-  <tr><td>Logs de inicialização</td><td><code>docker compose logs app db</code> → sem erros críticos (ERROR/FATAL)</td><td class="ok">✔ OK</td></tr>
-  <tr><td>Saúde app + banco</td><td><code>http://localhost:8080/saude.php</code> → <code>{"status":"ok","banco":"ok"}</code></td><td class="ok">✔ OK</td></tr>
+  <tr><td>Estado dos serviços e portas</td><td><code>docker compose ps</code> → app e db <i>Up (healthy)</i>, porta 3000</td><td class="ok">✔ OK</td></tr>
+  <tr><td>Logs de inicialização</td><td><code>docker compose logs app db</code> → "EstuLanches rodando na porta 3000", sem ERROR/FATAL</td><td class="ok">✔ OK</td></tr>
+  <tr><td>Saúde app + banco</td><td><code>http://localhost:3000/saude</code> → <code>{"status":"ok","banco":"ok"}</code></td><td class="ok">✔ OK</td></tr>
   <tr><td>Testes unitários (10)</td><td>cálculo de total, validação de produto, fluxo de status, moeda</td><td class="ok">✔ 10/10</td></tr>
-  <tr><td>Testes de integração (10)</td><td>conexão/tabelas, login, hash de senha, cadastro de produto, criação de pedido, produto indisponível, status, fila</td><td class="ok">✔ 10/10</td></tr>
+  <tr><td>Testes de integração (10)</td><td>tabelas, /saude, login certo/errado, hash bcrypt, bloqueio sem login, cadastro de produto, pedido, produto em falta, status/fila</td><td class="ok">✔ 10/10</td></tr>
   <tr><td>Teste funcional</td><td>Login inválido/válido, cadastro de produto, registro de pedido, avanço de status, logout</td><td class="ok">✔ OK</td></tr>
-  <tr><td colspan="3"><code>docker compose exec app vendor/bin/phpunit --testdox</code> → <b>OK (20 tests)</b></td></tr>
+  <tr><td colspan="3"><code>docker compose exec app npm test</code> → <b>pass 20 / fail 0</b></td></tr>
 </table>
 
 <h2>4. Plano de retorno (rollback)</h2>
 <table>
-  <tr><td>Em caso de falha: <code>docker compose down</code> (o volume <code>dados_mysql</code> é preservado) → voltar para a imagem/tag anterior → <code>docker compose up -d</code>. Backup do banco: <code>docker compose exec db mysqldump -u root -p estulanches &gt; backup.sql</code>.</td></tr>
+  <tr><td>Em caso de falha: <code>docker compose down</code> (o volume <code>dados_postgres</code> é preservado) → voltar para a imagem/tag anterior → <code>docker compose up -d</code>. Backup do banco: <code>docker compose exec db pg_dump -U estulanches estulanches &gt; backup.sql</code>.</td></tr>
 </table>
 
 <div class="status">STATUS FINAL DA IMPLANTAÇÃO: ✔ CONCLUÍDA COM SUCESSO — sistema em operação</div>

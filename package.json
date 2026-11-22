@@ -1,0 +1,21 @@
+{
+  "name": "estulanches",
+  "version": "1.0.0",
+  "description": "Gestão de cardápio e pedidos da cantina escolar",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test --test-reporter=spec --test-concurrency=1 \"tests/**/*.test.js\"",
+    "test:unit": "node --test \"tests/unit/*.test.js\"",
+    "test:integracao": "node --test \"tests/integracao/*.test.js\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^5.3.0",
+    "pg": "^8.23.1"
+  }
+}

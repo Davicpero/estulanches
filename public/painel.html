@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Painel - EstuLanches</title>
+</head>
+<body>
+  <nav>
+    <b>🥪 EstuLanches</b> |
+    <a href="/painel.html">Início</a> |
+    <a href="/cardapio.html">Cardápio</a> |
+    <a href="/pedidos.html">Pedidos</a> |
+    Usuário: <b id="usuario"></b>
+    <button id="sair">Sair</button>
+  </nav>
+  <hr>
+
+  <h1>Olá, <span id="nome"></span>!</h1>
+
+  <table border="1" cellpadding="10">
+    <tr>
+      <th>Pedidos em aberto</th>
+      <th>Produtos no cardápio</th>
+      <th>Vendido hoje</th>
+    </tr>
+    <tr>
+      <td id="abertos"></td>
+      <td id="produtos"></td>
+      <td id="vendido"></td>
+    </tr>
+  </table>
+
+  <p>
+    <a href="/pedidos.html">Ir para Pedidos</a> |
+    <a href="/cardapio.html">Ir para Cardápio</a>
+  </p>
+
+  <script type="module" src="/js/painel.js"></script>
+</body>
+</html>
