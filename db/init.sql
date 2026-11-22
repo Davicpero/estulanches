@@ -1,8 +1,3 @@
--- =============================================
--- EstuLanches - criação e dados iniciais do banco
--- Executado automaticamente pelo container MySQL
--- na primeira inicialização (docker-entrypoint-initdb.d)
--- =============================================
 SET NAMES utf8mb4;
 
 CREATE DATABASE IF NOT EXISTS estulanches CHARACTER SET utf8mb4;
@@ -12,7 +7,7 @@ CREATE TABLE usuarios (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nome       VARCHAR(100) NOT NULL,
     email      VARCHAR(100) NOT NULL UNIQUE,
-    senha      VARCHAR(255) NOT NULL          -- hash bcrypt
+    senha      VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE produtos (
@@ -43,8 +38,6 @@ CREATE TABLE itens_pedido (
     FOREIGN KEY (id_produto) REFERENCES produtos(id_produto)
 );
 
--- ===== DADOS INICIAIS =====
--- senhas: admin123 / cantina123 / caixa123
 INSERT INTO usuarios (nome, email, senha) VALUES
 ('Administrador', 'admin@estulanches.com',   '$2y$10$Sm9pCxPsE9X2XvtJl1Y6h./hJRSKsnVKaR.ngMK/Mwox4.lYTxdLe'),
 ('Dona Maria',    'cantina@estulanches.com', '$2y$10$0VrpCVu6L7WevuaGiENPTeBtkmK9uC4m1Q9y3x54a8pW8NGMvRWnu'),

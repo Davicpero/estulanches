@@ -1,7 +1,4 @@
 <?php
-// Conexão com o banco.
-// Os dados vêm de VARIÁVEIS DE AMBIENTE (definidas no docker-compose.yml),
-// assim nenhuma senha fica escrita no código.
 function conectar(): PDO
 {
     $host  = getenv('DB_HOST') ?: 'localhost';

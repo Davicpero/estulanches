@@ -4,7 +4,6 @@ require __DIR__ . '/../app/sessao.php';
 $msg = '';
 $erro = '';
 
-// NOVO PEDIDO
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $id = criar_pedido($pdo, $_POST['cliente'], $_SESSION['id_usuario'], $_POST['qtd'] ?? []);
@@ -14,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// AVANÇAR STATUS (Recebido -> Preparando -> Pronto -> Entregue)
 if (isset($_GET['avancar'])) {
     avancar_pedido($pdo, (int) $_GET['avancar']);
     $msg = 'Status atualizado!';

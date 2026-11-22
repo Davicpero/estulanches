@@ -1,13 +1,5 @@
-# ==========================================================
-#  EstuLanches - ambiente de produção
-#  Subir:      docker compose up -d --build
-#  Situação:   docker compose ps
-#  Logs:       docker compose logs
-#  Testes:     docker compose exec app vendor/bin/phpunit --testdox
-# ==========================================================
 services:
 
-  # ---------- Banco de dados ----------
   db:
     image: mysql:8.4
     container_name: estulanches_db
@@ -19,34 +11,33 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS:-Troque-Root-456}
       TZ: America/Sao_Paulo
     volumes:
-      - dados_mysql:/var/lib/mysql                                   # dados não somem ao recriar o container
-      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro      # cria tabelas na 1ª vez
-    # SEM "ports": o banco NÃO fica exposto fora do Docker (segurança)
+      - dados_mysql:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASS:-Troque-Root-456}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASS:-Troque-Root-456}"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 20
+      start_period: 30s
     networks:
       - rede_interna
 
-  # ---------- Aplicação PHP ----------
   app:
     build: .
     image: estulanches:1.0.0
     container_name: estulanches_app
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8080}:80"          # acesso: http://localhost:8080
+      - "${APP_PORT:-8080}:80"
     environment:
-      DB_HOST: db                        # nome do serviço = endereço na rede do Docker
+      DB_HOST: db
       DB_NAME: estulanches
       DB_USER: ${DB_USER:-estulanches}
       DB_PASS: ${DB_PASS:-Troque-Esta-Senha-123}
       TZ: America/Sao_Paulo
     depends_on:
       db:
-        condition: service_healthy       # só sobe depois que o banco está pronto
+        condition: service_healthy
     networks:
       - rede_interna
 

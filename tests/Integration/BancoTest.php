@@ -1,11 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-/**
- * TESTES DE INTEGRAÇÃO
- * Testam a aplicação conversando com o MySQL de verdade (container "db").
- * Tudo que o teste cria é apagado no final (tearDown).
- */
 class BancoTest extends TestCase
 {
     private PDO $pdo;
@@ -50,7 +45,7 @@ class BancoTest extends TestCase
     {
         $senha = $this->pdo->query("SELECT senha FROM usuarios WHERE email = 'admin@estulanches.com'")->fetchColumn();
         $this->assertNotSame('admin123', $senha);
-        $this->assertStringStartsWith('$2y$', $senha);   // hash bcrypt
+        $this->assertStringStartsWith('$2y$', $senha);
     }
 
     public function test_cadastra_produto_e_ele_aparece_no_cardapio(): void
@@ -64,7 +59,6 @@ class BancoTest extends TestCase
 
     public function test_cria_pedido_com_total_calculado_pelo_banco(): void
     {
-        // 2 Coxinhas (6,50) + 1 Suco (5,00) = 18,00
         $id = criar_pedido($this->pdo, 'Aluno Teste', 1, [1 => 2, 4 => 1]);
         $this->pedidos_criados[] = $id;
 
@@ -79,7 +73,7 @@ class BancoTest extends TestCase
     public function test_nao_vende_produto_indisponivel(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        criar_pedido($this->pdo, 'Aluno Teste', 1, [6 => 1]);   // Bolo de cenoura está em falta
+        criar_pedido($this->pdo, 'Aluno Teste', 1, [6 => 1]);
     }
 
     public function test_pedido_sem_itens_e_recusado(): void

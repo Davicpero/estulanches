@@ -4,7 +4,6 @@ require __DIR__ . '/../app/sessao.php';
 $msg = '';
 $erros = [];
 
-// CADASTRAR
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $erros = validar_produto($_POST['nome'], $_POST['preco']);
     if (!$erros) {
@@ -13,13 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// LIGAR/DESLIGAR disponibilidade
 if (isset($_GET['alternar'])) {
     $pdo->prepare('UPDATE produtos SET disponivel = 1 - disponivel WHERE id_produto = ?')->execute([$_GET['alternar']]);
     $msg = 'Disponibilidade alterada!';
 }
 
-// EXCLUIR
 if (isset($_GET['excluir'])) {
     try {
         $pdo->prepare('DELETE FROM produtos WHERE id_produto = ?')->execute([$_GET['excluir']]);

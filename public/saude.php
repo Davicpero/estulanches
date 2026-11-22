@@ -1,5 +1,4 @@
 <?php
-// Health check: usado pelo Docker para saber se a aplicação e o banco estão OK.
 header('Content-Type: application/json');
 try {
     require_once __DIR__ . '/../app/conexao.php';

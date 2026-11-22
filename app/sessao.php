@@ -1,5 +1,4 @@
 <?php
-// Incluir no topo das páginas que exigem login.
 require_once __DIR__ . '/conexao.php';
 require_once __DIR__ . '/funcoes.php';
 
@@ -11,7 +10,6 @@ if (!isset($_SESSION['id_usuario'])) {
     exit;
 }
 
-// Sessão expira após 15 minutos sem uso
 if (time() - $_SESSION['ultimo_acesso'] > 900) {
     session_destroy();
     header('Location: login.php?expirou=1');

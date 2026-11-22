@@ -1,11 +1,6 @@
 <?php
-// Regras do sistema. Ficam separadas das telas para poderem ser testadas.
-
 const STATUS_PEDIDO = ['RECEBIDO', 'PREPARANDO', 'PRONTO', 'ENTREGUE'];
 
-// ---------- Funções puras (testes UNITÁRIOS) ----------
-
-/** Soma preço x quantidade de cada item. */
 function calcular_total(array $itens): float
 {
     $total = 0;
@@ -15,7 +10,6 @@ function calcular_total(array $itens): float
     return round($total, 2);
 }
 
-/** Retorna a lista de erros do produto (vazia = válido). */
 function validar_produto(string $nome, $preco): array
 {
     $erros = [];
@@ -28,7 +22,6 @@ function validar_produto(string $nome, $preco): array
     return $erros;
 }
 
-/** RECEBIDO -> PREPARANDO -> PRONTO -> ENTREGUE. Retorna null no último. */
 function proximo_status(string $status): ?string
 {
     $i = array_search($status, STATUS_PEDIDO);
@@ -43,9 +36,6 @@ function formatar_moeda($valor): string
     return 'R$ ' . number_format((float) $valor, 2, ',', '.');
 }
 
-// ---------- Funções com banco (testes de INTEGRAÇÃO) ----------
-
-/** Retorna o usuário se e-mail e senha conferem, senão null. */
 function autenticar(PDO $pdo, string $email, string $senha): ?array
 {
     $sql = $pdo->prepare('SELECT * FROM usuarios WHERE email = ?');
@@ -74,11 +64,6 @@ function cadastrar_produto(PDO $pdo, string $nome, string $categoria, $preco): i
     return (int) $pdo->lastInsertId();
 }
 
-/**
- * Cria o pedido e seus itens.
- * $quantidades = [id_produto => quantidade]
- * O PREÇO É BUSCADO NO BANCO (não confia no valor vindo do navegador).
- */
 function criar_pedido(PDO $pdo, string $cliente, int $id_usuario, array $quantidades): int
 {
     $itens = [];
@@ -103,7 +88,6 @@ function criar_pedido(PDO $pdo, string $cliente, int $id_usuario, array $quantid
         throw new InvalidArgumentException('Escolha pelo menos um produto.');
     }
 
-    // Transação: ou grava o pedido inteiro, ou não grava nada
     $pdo->beginTransaction();
     try {
         $sql = $pdo->prepare('INSERT INTO pedidos (cliente, id_usuario, total) VALUES (?, ?, ?)');
@@ -134,7 +118,6 @@ function avancar_pedido(PDO $pdo, int $id_pedido): void
     }
 }
 
-/** Pedidos com os itens em texto (ex.: "2x Coxinha, 1x Suco"). */
 function listar_pedidos(PDO $pdo): array
 {
     return $pdo->query(

@@ -1,17 +1,13 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-/**
- * TESTES UNITÁRIOS
- * Testam funções isoladas, SEM banco de dados.
- */
 class FuncoesTest extends TestCase
 {
     public function test_calcula_total_do_pedido(): void
     {
         $itens = [
-            ['preco' => 6.50, 'quantidade' => 2],   // 2 coxinhas = 13,00
-            ['preco' => 5.00, 'quantidade' => 1],   // 1 suco     =  5,00
+            ['preco' => 6.50, 'quantidade' => 2],
+            ['preco' => 5.00, 'quantidade' => 1],
         ];
         $this->assertSame(18.0, calcular_total($itens));
     }
