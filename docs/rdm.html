@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>RDM-001 - EstuLanches</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  body { font-family: Arial, sans-serif; font-size: 10.5px; color: #222; margin: 0; }
+  h1 { font-size: 16px; margin: 0; }
+  .topo { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e8590c; padding-bottom: 6px; margin-bottom: 8px; }
+  .topo small { color: #666; }
+  h2 { font-size: 11.5px; background: #333; color: #fff; padding: 4px 6px; margin: 9px 0 4px; }
+  table { width: 100%; border-collapse: collapse; }
+  td, th { border: 1px solid #bbb; padding: 3px 6px; vertical-align: top; text-align: left; }
+  th { background: #f2f2f2; width: 30%; }
+  .ok { color: #1a7f37; font-weight: bold; }
+  .status { border: 2px solid #1a7f37; background: #e9f7ee; padding: 7px; font-size: 13px; text-align: center; font-weight: bold; color: #1a7f37; margin-top: 6px; }
+  .assin { display: flex; gap: 30px; margin-top: 22px; }
+  .assin div { flex: 1; border-top: 1px solid #333; text-align: center; padding-top: 3px; }
+  code { font-family: Consolas, monospace; font-size: 10px; }
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div><h1>Ficha Simplificada de Registro de Mudança (RDM)</h1><small>Implantação em Produção — Sistema EstuLanches</small></div>
+  <div><b>Nº RDM-001</b></div>
+</div>
+
+<h2>1. Identificação</h2>
+<table>
+  <tr><th>Sistema</th><td>EstuLanches — gestão de cardápio e pedidos da cantina escolar</td></tr>
+  <tr><th>Versão implantada</th><td><b>1.0.0</b> — imagem <code>estulanches:1.0.0</code> (PHP 8.3 + Apache) e <code>mysql:8.4</code></td></tr>
+  <tr><th>Data / horário</th><td>22/11/2026 — início ____:____ &nbsp; término ____:____</td></tr>
+  <tr><th>Responsável técnico</th><td>______________________________________________</td></tr>
+  <tr><th>Tipo de mudança</th><td>Implantação inicial (nova aplicação em produção com Docker Compose)</td></tr>
+  <tr><th>Repositório</th><td>______________________________________________</td></tr>
+</table>
+
+<h2>2. Parâmetros alterados / configurados</h2>
+<table>
+  <tr><th>Porta da aplicação</th><td><code>8080:80</code> (variável <code>APP_PORT</code>)</td></tr>
+  <tr><th>Banco de dados</th><td>Sem porta publicada — acessível só pela rede interna <code>rede_interna</code></td></tr>
+  <tr><th>Variáveis de ambiente</th><td><code>DB_HOST=db</code>, <code>DB_NAME=estulanches</code>, <code>DB_USER</code>, <code>DB_PASS</code>, <code>DB_ROOT_PASS</code>, <code>TZ=America/Sao_Paulo</code> (senhas no arquivo <code>.env</code>, fora do Git)</td></tr>
+  <tr><th>Persistência</th><td>Volume <code>dados_mysql</code> em <code>/var/lib/mysql</code>; carga inicial por <code>db/init.sql</code></td></tr>
+  <tr><th>Disponibilidade</th><td><code>restart: unless-stopped</code>; healthcheck no banco (<code>mysqladmin ping</code>) e na app (<code>/saude.php</code>); app só sobe com o banco <i>healthy</i></td></tr>
+  <tr><th>Segurança</th><td><code>php.ini-production</code>, <code>expose_php=Off</code>, <code>ServerTokens Prod</code>, listagem de diretórios desativada, só a pasta <code>public/</code> é servida</td></tr>
+</table>
+
+<h2>3. Resultado dos testes de validação</h2>
+<table>
+  <tr><th>Item</th><th style="width:45%">Comando / evidência</th><th style="width:15%">Resultado</th></tr>
+  <tr><td>Build e subida dos serviços</td><td><code>docker compose up -d --build</code></td><td class="ok">✔ OK</td></tr>
+  <tr><td>Estado dos serviços e portas</td><td><code>docker compose ps</code> → app e db <i>Up (healthy)</i>, porta 8080</td><td class="ok">✔ OK</td></tr>
+  <tr><td>Logs de inicialização</td><td><code>docker compose logs app db</code> → sem erros críticos (ERROR/FATAL)</td><td class="ok">✔ OK</td></tr>
+  <tr><td>Saúde app + banco</td><td><code>http://localhost:8080/saude.php</code> → <code>{"status":"ok","banco":"ok"}</code></td><td class="ok">✔ OK</td></tr>
+  <tr><td>Testes unitários (10)</td><td>cálculo de total, validação de produto, fluxo de status, moeda</td><td class="ok">✔ 10/10</td></tr>
+  <tr><td>Testes de integração (10)</td><td>conexão/tabelas, login, hash de senha, cadastro de produto, criação de pedido, produto indisponível, status, fila</td><td class="ok">✔ 10/10</td></tr>
+  <tr><td>Teste funcional</td><td>Login inválido/válido, cadastro de produto, registro de pedido, avanço de status, logout</td><td class="ok">✔ OK</td></tr>
+  <tr><td colspan="3"><code>docker compose exec app vendor/bin/phpunit --testdox</code> → <b>OK (20 tests)</b></td></tr>
+</table>
+
+<h2>4. Plano de retorno (rollback)</h2>
+<table>
+  <tr><td>Em caso de falha: <code>docker compose down</code> (o volume <code>dados_mysql</code> é preservado) → voltar para a imagem/tag anterior → <code>docker compose up -d</code>. Backup do banco: <code>docker compose exec db mysqldump -u root -p estulanches &gt; backup.sql</code>.</td></tr>
+</table>
+
+<div class="status">STATUS FINAL DA IMPLANTAÇÃO: ✔ CONCLUÍDA COM SUCESSO — sistema em operação</div>
+
+<div class="assin">
+  <div>Técnico de Implantação</div>
+  <div>Responsável pela aprovação</div>
+</div>
+
+</body>
+</html>

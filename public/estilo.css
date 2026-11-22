@@ -1,0 +1,44 @@
+body { margin: 0; font-family: Arial, sans-serif; background: #fff8ef; color: #333; }
+
+nav { background: #e8590c; padding: 12px 20px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+nav, nav a { color: #fff; text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+nav span { margin-left: auto; }
+nav .sair { background: #fff; color: #e8590c; padding: 6px 12px; border-radius: 4px; font-weight: bold; }
+
+main { max-width: 1000px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+
+.form { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+input, select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+button { padding: 9px 18px; background: #e8590c; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.cliente { width: 300px; margin-bottom: 10px; }
+
+.produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.produtos label { display: flex; justify-content: space-between; align-items: center; gap: 6px;
+                  border: 1px solid #eee; padding: 8px; border-radius: 6px; }
+.produtos input { width: 55px; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+th { background: #333; color: #fff; }
+small { color: #888; }
+
+.msg  { background: #e6f6e6; padding: 10px; border-radius: 4px; }
+.erro { background: #fde2e2; color: #a00; padding: 10px; border-radius: 4px; }
+
+.status { padding: 3px 8px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+.recebido   { background: #e7f0ff; color: #1c4fa0; }
+.preparando { background: #fff3cd; color: #8a6100; }
+.pronto     { background: #e6f6e6; color: #217a21; }
+.entregue   { background: #eee; color: #777; }
+
+.cards { display: flex; gap: 15px; flex-wrap: wrap; }
+.cards a { flex: 1; min-width: 200px; padding: 25px; background: #333; color: #fff; text-decoration: none; border-radius: 8px; }
+.cards a span { display: block; font-size: 30px; font-weight: bold; color: #ffa94d; }
+.cards a:hover { background: #e8590c; }
+.cards a:hover span { color: #fff; }
+
+.login { width: 300px; margin: 100px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px #0002; text-align: center; }
+.login input { width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+.login label { display: block; text-align: left; }
+.login button { width: 100%; }
